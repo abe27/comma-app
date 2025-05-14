@@ -47,12 +47,15 @@ class ActionStatusResource extends Resource
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\Textarea::make('description')
+                Forms\Components\RichEditor::make('description')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('color')
-                    ->maxLength(255)
-                    ->default('info'),
-                Forms\Components\Toggle::make('is_active'),
+                Forms\Components\Select::make('color')
+                    ->searchable()
+                    ->options(fn() => \App\Enums\Colors::class)
+                    ->default(\App\Enums\Colors::INFO),
+                Forms\Components\Toggle::make('is_active')
+                    ->label('Status')
+                    ->columnStart(1),
             ]);
     }
 
@@ -60,23 +63,27 @@ class ActionStatusResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                Tables\Columns\TextColumn::make('rowid')
                     ->label('ID')
-                    ->searchable(),
+                    ->rowIndex(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('description')
+                    ->html(),
                 Tables\Columns\TextColumn::make('color')
-                    ->searchable(),
+                    ->badge()
+                    ->color(fn(ActionStatus $record) => $record->color->value),
                 Tables\Columns\IconColumn::make('is_active')
+                    ->label('Status')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d-m-Y H:s:i')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d-m-Y H:s:i')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
                 //

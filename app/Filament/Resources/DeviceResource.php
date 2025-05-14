@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\DeviceStatus;
 use App\Filament\Resources\DeviceResource\Pages;
 use App\Filament\Resources\DeviceResource\RelationManagers;
 use App\Models\Device;
+use App\Models\DeviceType;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -50,25 +52,36 @@ class DeviceResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('device_type_id')
-                    ->required()
-                    ->maxLength(26),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('asset_tag')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TextInput::make('serial_number')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TextInput::make('brand')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TextInput::make('model')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\Toggle::make('is_active'),
+                Forms\Components\Section::make('Information')
+                    ->compact()
+                    ->columns(3)
+                    ->schema([
+                        Forms\Components\Select::make('device_type_id')
+                            ->required()
+                            ->searchable()
+                            ->options(fn() => DeviceType::all()->pluck('name', 'id')->toArray()),
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnStart(1),
+                        Forms\Components\TextInput::make('asset_tag')
+                            ->maxLength(255)
+                            ->default(null),
+                        Forms\Components\TextInput::make('serial_number')
+                            ->maxLength(255)
+                            ->default(null),
+                        Forms\Components\TextInput::make('brand')
+                            ->maxLength(255)
+                            ->default(null),
+                        Forms\Components\TextInput::make('model')
+                            ->maxLength(255)
+                            ->default(null),
+                        Forms\Components\Select::make('status')
+                            ->label('Status')
+                            ->searchable()
+                            ->options(fn() => \App\Enums\DeviceStatus::class)
+                            ->columnStart(1),
+                    ]),
             ]);
     }
 
@@ -76,11 +89,9 @@ class DeviceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                Tables\Columns\TextColumn::make('rowid')
                     ->label('ID')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('device_type_id')
-                    ->searchable(),
+                    ->rowIndex(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('asset_tag')
@@ -91,19 +102,33 @@ class DeviceResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('model')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('is_active')
-                    ->boolean(),
+                Tables\Columns\TextColumn::make('deviceType.name')
+                    ->searchable()
+                    ->badge(),
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn(Device $record) => $record->status->color()),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d-m-Y H:s:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d-m-Y H:s:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('device_type_id')
+                    ->label('Device Type')
+                    ->searchable()
+                    ->multiple()
+                    ->options(fn() => DeviceType::all()->pluck('name', 'id')->toArray()),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
+                    ->searchable()
+                    ->multiple()
+                    ->options(fn() => DeviceStatus::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

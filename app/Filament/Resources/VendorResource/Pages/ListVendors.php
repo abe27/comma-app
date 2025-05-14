@@ -13,7 +13,14 @@ class ListVendors extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label("Create")
+                ->icon('heroicon-o-plus-circle'),
         ];
     }
+
+    // public function getHeading(): string
+    // {
+    //     return 'ข้อมูลลักษณะการเสีย';
+    // }
 }
