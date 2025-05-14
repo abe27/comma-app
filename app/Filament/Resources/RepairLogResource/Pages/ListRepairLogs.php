@@ -13,9 +13,9 @@ class ListRepairLogs extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->label("Create")
-                ->icon('heroicon-o-plus-circle'),
+            // Actions\CreateAction::make()
+            //     ->label("Create")
+            //     ->icon('heroicon-o-plus-circle'),
         ];
     }
 }

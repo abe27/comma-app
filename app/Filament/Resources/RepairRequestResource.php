@@ -48,18 +48,18 @@ class RepairRequestResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
-                    ->required()
-                    ->maxLength(26),
+                // Forms\Components\TextInput::make('user_id')
+                //     ->required()
+                //     ->maxLength(26),
                 Forms\Components\TextInput::make('device_type_id')
                     ->required()
                     ->maxLength(26),
                 Forms\Components\TextInput::make('device_id')
                     ->required()
                     ->maxLength(26),
-                Forms\Components\TextInput::make('job_no')
-                    ->required()
-                    ->maxLength(255),
+                // Forms\Components\TextInput::make('job_no')
+                //     ->required()
+                //     ->maxLength(255),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),

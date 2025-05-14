@@ -109,7 +109,7 @@ class RepairLogResource extends Resource
     {
         return [
             'index' => Pages\ListRepairLogs::route('/'),
-            'create' => Pages\CreateRepairLog::route('/create'),
+            // 'create' => Pages\CreateRepairLog::route('/create'),
             'edit' => Pages\EditRepairLog::route('/{record}/edit'),
         ];
     }
