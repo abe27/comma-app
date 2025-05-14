@@ -69,7 +69,7 @@ class WebPanelProvider extends PanelProvider
             ->navigation(true)
             ->topbar(true)
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
-            ->font('Poppins')
+            ->font('Sarabun')
             ->brandLogoHeight('3.1rem')
             ->databaseNotifications()
             ->databaseNotificationsPolling('2s')

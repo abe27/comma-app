@@ -18,10 +18,12 @@ class Device extends Model
         'serial_number',
         'brand',
         'model',
+        'status',
         'is_active',
     ];
 
     protected $casts = [
+        'status' => \App\Enums\DeviceStatus::class,
         'is_active' => 'boolean',
     ];
 

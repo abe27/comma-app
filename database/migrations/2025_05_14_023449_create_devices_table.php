@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('serial_number')->nullable();
             $table->string('brand')->nullable();
             $table->string('model')->nullable();
+            $table->string('status')->nullable()->default(\App\Enums\DeviceStatus::Active);
             $table->boolean('is_active')->nullable()->default(true);
             $table->timestamps();
         });

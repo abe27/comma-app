@@ -12,6 +12,17 @@ class DeviceTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        // Notebook/PC/Printer/Monitor/Other
+
+        $deviceTypes = [
+            ["name" => "Notebook"],
+            ["name" => "PC"],
+            ["name" => "Printer"],
+            ["name" => "Monitor"],
+            ["name" => "Other"],
+        ];
+
+        foreach ($deviceTypes as $deviceType) {
+            \App\Models\DeviceType::updateOrcreate(["name" => $deviceType["name"]], $deviceType);
+        }
     }
 }

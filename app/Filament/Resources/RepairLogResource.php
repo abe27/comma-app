@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\VendorResource\Pages;
-use App\Filament\Resources\VendorResource\RelationManagers;
-use App\Models\Vendor;
+use App\Filament\Resources\RepairLogResource\Pages;
+use App\Filament\Resources\RepairLogResource\RelationManagers;
+use App\Models\RepairLog;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,20 +14,19 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
-class VendorResource extends Resource
+class RepairLogResource extends Resource
 {
-    protected static ?string $model = Vendor::class;
+    protected static ?string $model = RepairLog::class;
 
-    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'Vendor';
+    protected static ?string $navigationLabel = 'Logging';
 
-    protected static ?string $slug = 'vendor';
+    protected static ?string $slug = 'logs';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 2;
 
     // protected static ?string $navigationParentItem = 'Products';
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationGroup = 'Logs';
 
     public static function shouldRegisterNavigation(): bool
     {
@@ -36,28 +35,29 @@ class VendorResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['name', 'email'];
+        return [
+            'note',
+        ];
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
-                    ->maxLength(26)
-                    ->default(null),
-                Forms\Components\TextInput::make('name')
+                Forms\Components\TextInput::make('repair_request_id')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TextInput::make('phone_no')
-                    ->tel()
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\Toggle::make('is_active'),
+                    ->maxLength(26),
+                Forms\Components\TextInput::make('updated_by_id')
+                    ->required()
+                    ->maxLength(26),
+                Forms\Components\TextInput::make('old_status_id')
+                    ->required()
+                    ->maxLength(26),
+                Forms\Components\TextInput::make('new_status_id')
+                    ->required()
+                    ->maxLength(26),
+                Forms\Components\Textarea::make('note')
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -68,16 +68,14 @@ class VendorResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user_id')
+                Tables\Columns\TextColumn::make('repair_request_id')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
+                Tables\Columns\TextColumn::make('updated_by_id')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
+                Tables\Columns\TextColumn::make('old_status_id')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('phone_no')
+                Tables\Columns\TextColumn::make('new_status_id')
                     ->searchable(),
-                Tables\Columns\IconColumn::make('is_active')
-                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -110,9 +108,9 @@ class VendorResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListVendors::route('/'),
-            'create' => Pages\CreateVendor::route('/create'),
-            'edit' => Pages\EditVendor::route('/{record}/edit'),
+            'index' => Pages\ListRepairLogs::route('/'),
+            'create' => Pages\CreateRepairLog::route('/create'),
+            'edit' => Pages\EditRepairLog::route('/{record}/edit'),
         ];
     }
 }

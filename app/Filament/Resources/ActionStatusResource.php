@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\VendorResource\Pages;
-use App\Filament\Resources\VendorResource\RelationManagers;
-use App\Models\Vendor;
+use App\Filament\Resources\ActionStatusResource\Pages;
+use App\Filament\Resources\ActionStatusResource\RelationManagers;
+use App\Models\ActionStatus;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,16 +14,17 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
-class VendorResource extends Resource
+class ActionStatusResource extends Resource
 {
-    protected static ?string $model = Vendor::class;
+    protected static ?string $model = ActionStatus::class;
 
     // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'Vendor';
 
-    protected static ?string $slug = 'vendor';
+    protected static ?string $navigationLabel = 'Status';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?string $slug = 'status';
+
+    protected static ?int $navigationSort = 4;
 
     // protected static ?string $navigationParentItem = 'Products';
 
@@ -36,27 +37,21 @@ class VendorResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['name', 'email'];
+        return ['name', 'description'];
     }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('user_id')
-                    ->maxLength(26)
-                    ->default(null),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
+                Forms\Components\Textarea::make('description')
+                    ->columnSpanFull(),
+                Forms\Components\TextInput::make('color')
                     ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TextInput::make('phone_no')
-                    ->tel()
-                    ->maxLength(255)
-                    ->default(null),
+                    ->default('info'),
                 Forms\Components\Toggle::make('is_active'),
             ]);
     }
@@ -68,13 +63,9 @@ class VendorResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('user_id')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('phone_no')
+                Tables\Columns\TextColumn::make('color')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean(),
@@ -110,9 +101,9 @@ class VendorResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListVendors::route('/'),
-            'create' => Pages\CreateVendor::route('/create'),
-            'edit' => Pages\EditVendor::route('/{record}/edit'),
+            'index' => Pages\ListActionStatuses::route('/'),
+            'create' => Pages\CreateActionStatus::route('/create'),
+            'edit' => Pages\EditActionStatus::route('/{record}/edit'),
         ];
     }
 }
