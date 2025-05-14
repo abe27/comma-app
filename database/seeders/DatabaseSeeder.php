@@ -20,7 +20,16 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        User::updateOrcreate();
+        User::updateOrcreate([
+            'name' => "2974",
+            'email' => 'taweechai.yue@yahoo.com'
+        ], [
+            'first_name' => "Administrator",
+            'last_name' => null,
+            'password' => null,
+            'avatar' => "avatars/bear.png",
+            'rule' => \App\Enums\Rules::Admin,
+        ]);
 
         $this->call([
             VendorSeeder::class,

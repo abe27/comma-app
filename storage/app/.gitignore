@@ -1,4 +1,7 @@
-*
+# *
 !private/
 !public/
+!**/**/*.png
+!**/**/.gitkeep
 !.gitignore
+!.gitkeep
