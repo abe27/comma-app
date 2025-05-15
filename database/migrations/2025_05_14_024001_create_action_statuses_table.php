@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('action_statuses', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->string('name')->unique();
+            $table->integer('value')->unique();
             $table->longText('description')->nullable();
             $table->string('color')->nullable()->default(\App\Enums\Colors::INFO);
             $table->boolean('is_active')->nullable()->default(true);

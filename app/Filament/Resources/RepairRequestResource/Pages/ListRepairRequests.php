@@ -5,6 +5,7 @@ namespace App\Filament\Resources\RepairRequestResource\Pages;
 use App\Filament\Resources\RepairRequestResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Auth;
 
 class ListRepairRequests extends ListRecords
 {
@@ -15,7 +16,8 @@ class ListRepairRequests extends ListRecords
         return [
             Actions\CreateAction::make()
                 ->label("Create")
-                ->icon('heroicon-o-plus-circle'),
+                ->icon('heroicon-o-plus-circle')
+                ->visible(fn() => Auth::user()->rule == \App\Enums\Rules::User),
         ];
     }
 }

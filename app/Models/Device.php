@@ -27,6 +27,11 @@ class Device extends Model
         'is_active' => 'boolean',
     ];
 
+    public function getFullNameAttribute()
+    {
+        return $this->brand . "(" . $this->asset_tag . ")";
+    }
+
     public function deviceType()
     {
         return $this->belongsTo(DeviceType::class);

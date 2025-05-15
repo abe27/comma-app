@@ -1,4 +1,7 @@
 # *
 temps/*.png
+request-attachments/*.png
+request-attachments/*.jpg
+request-attachments/*.jpeg
 !**/.gitkeep
 !.gitignore

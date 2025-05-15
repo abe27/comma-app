@@ -13,20 +13,18 @@ class ActionStatusSeeder extends Seeder
     public function run(): void
     {
         $status = [
-            ["name" => "รอรับเรื่อง", "color" => \App\Enums\Colors::WARNING],
-            ["name" => "กำลังตรวจสอบ", "color" => \App\Enums\Colors::PRIMARY],
-            ["name" => "รอมอบหมายงาน", "color" => \App\Enums\Colors::INFO],
-            ["name" => "ยกเลิกคำขอ", "color" => \App\Enums\Colors::DANGER],
-            ["name" => "รอพนักงาน IT ดำเนินการ", "color" => \App\Enums\Colors::WARNING],
-            ["name" => "กำลังซ่อม", "color" => \App\Enums\Colors::WARNING],
-            ["name" => "ซ่อมเสร็จ รอตรวจสอบ", "color" => \App\Enums\Colors::INFO],
-            ["name" => "ส่งต่อ Vendor", "color" => \App\Enums\Colors::PRIMARY],
-            ["name" => "รอ Vendor รับเรื่อง", "color" => \App\Enums\Colors::PRIMARY],
-            ["name" => "Vendor กำลังซ่อม", "color" => \App\Enums\Colors::WARNING],
-            ["name" => "Vendor ซ่อมเสร็จ รอตรวจสอบ", "color" => \App\Enums\Colors::SUCCESS],
-            ["name" => "รอผู้ใช้งานยืนยันผล", "color" => \App\Enums\Colors::WARNING],
-            ["name" => "ปิดงาน", "color" => \App\Enums\Colors::SUCCESS],
-            ["name" => "ยกเลิกคำขอ", "color" => \App\Enums\Colors::DANGER],
+            ["name" => "รอรับเรื่อง", "value" => 0, "color" => \App\Enums\Colors::WARNING],
+            ["name" => "รอพนักงาน IT รับงาน", "value" => 1, "color" => \App\Enums\Colors::PRIMARY],
+            ["name" => "ยกเลิกคำขอ", "value" => 2, "color" => \App\Enums\Colors::DANGER],
+            ["name" => "พนักงาน IT กำลังดำเนินการ", "value" => 4, "color" => \App\Enums\Colors::WARNING],
+            ["name" => "กำลังซ่อม", "value" => 5, "color" => \App\Enums\Colors::WARNING],
+            ["name" => "ซ่อมเสร็จ รอตรวจสอบ", "value" => 6, "color" => \App\Enums\Colors::INFO],
+            ["name" => "ส่งต่อ Vendor", "value" => 7, "color" => \App\Enums\Colors::PRIMARY],
+            ["name" => "รอ Vendor รับเรื่อง", "value" => 8, "color" => \App\Enums\Colors::PRIMARY],
+            ["name" => "Vendor กำลังซ่อม", "value" => 9, "color" => \App\Enums\Colors::WARNING],
+            ["name" => "Vendor ซ่อมเสร็จ รอตรวจสอบ", "value" => 10, "color" => \App\Enums\Colors::SUCCESS],
+            ["name" => "รอผู้ใช้งานยืนยันผล", "value" => 11, "color" => \App\Enums\Colors::WARNING],
+            ["name" => "ปิดงาน", "value" => 12, "color" => \App\Enums\Colors::SUCCESS],
         ];
 
         foreach ($status as $value) {

@@ -4,9 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RepairRequestResource\Pages;
 use App\Filament\Resources\RepairRequestResource\RelationManagers;
+use App\Models\Device;
+use App\Models\DeviceType;
 use App\Models\RepairRequest;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -31,7 +34,7 @@ class RepairRequestResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->rule == \App\Enums\Rules::Admin;
+        return true;
     }
 
     public static function getGloballySearchableAttributes(): array
@@ -48,67 +51,122 @@ class RepairRequestResource extends Resource
     {
         return $form
             ->schema([
-                // Forms\Components\TextInput::make('user_id')
-                //     ->required()
-                //     ->maxLength(26),
-                Forms\Components\TextInput::make('device_type_id')
-                    ->required()
-                    ->maxLength(26),
-                Forms\Components\TextInput::make('device_id')
-                    ->required()
-                    ->maxLength(26),
-                // Forms\Components\TextInput::make('job_no')
-                //     ->required()
-                //     ->maxLength(255),
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('location')
-                    ->maxLength(255)
-                    ->default(null),
-                Forms\Components\TextInput::make('action_status_id')
-                    ->maxLength(26)
-                    ->default(null),
+                Forms\Components\Section::make('Information')
+                    ->compact()
+                    ->collapsible()
+                    ->columns(4)
+                    ->columnSpanFull()
+                    ->schema([
+                        // Forms\Components\TextInput::make('user_id')
+                        //     ->required()
+                        //     ->maxLength(26),
+                        Forms\Components\Select::make('device_type_id')
+                            ->label('Device Type')
+                            ->required()
+                            ->searchable()
+                            ->options(fn() => DeviceType::all()->pluck('name', 'id')->toArray()),
+                        Forms\Components\Select::make('device_id')
+                            ->label('Device')
+                            ->required()
+                            ->searchable()
+                            ->options(fn(Get $get) => $get('device_type_id') ? Device::where('device_type_id', $get('device_type_id'))->pluck('asset_tag', 'id')->toArray() : []),
+                        // Forms\Components\TextInput::make('job_no')
+                        //     ->required()
+                        //     ->maxLength(255),
+                        Forms\Components\TextInput::make('name')
+                            ->label('Title')
+                            ->required()
+                            ->maxLength(255)
+                            ->columnStart(1),
+                        Forms\Components\RichEditor::make('description')
+                            ->columnSpanFull(),
+                        Forms\Components\RichEditor::make('remark')
+                            ->hiddenOn(['create', 'edit'])
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('location')
+                            ->maxLength(255)
+                            ->default(null),
+                        Forms\Components\FileUpload::make('attachments')
+                            ->multiple()
+                            ->panelLayout('grid')
+                            ->reorderable()
+                            ->appendFiles()
+                            ->openable()
+                            ->downloadable()
+                            ->previewable(true)
+                            ->uploadingMessage('Uploading attachment...')
+                            ->directory('request-attachments')
+                            ->visibility('public')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->query(function () {
+                $repairs = static::getModel()::where('job_date', '>=', "01-" . now()->format('m-Y'));
+                if (in_array(Auth::user()->rule, [\App\Enums\Rules::Employee])) {
+                    return $repairs->where('assigned_to', Auth::user()->id)->orderBy('updated_at');
+                }
+                return $repairs->orderBy('updated_at');
+            })
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                Tables\Columns\TextColumn::make('rowid')
                     ->label('ID')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('user_id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('device_type_id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('device_id')
+                    ->rowIndex(),
+                Tables\Columns\TextColumn::make('job_date')
+                    ->date('d-m-Y')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('job_no')
+                    ->label('Job No.')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('deviceType.name')
+                    ->label('Device Type')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('device.asset_tag')
+                    ->label('Tag')
+                    ->searchable()
+                    ->badge()
+                    ->color('success'),
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Issue')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('location')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('action_status_id')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Request By')
+                    ->searchable()
+                    ->badge()
+                    ->color('warning')
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('assigned')
+                    ->label('Assigned')
+                    ->searchable()
+                    ->badge()
+                    ->color('success')
+                    ->toggleable(isToggledHiddenByDefault: false),
+                Tables\Columns\TextColumn::make('actionStatus.name')
+                    ->label('Action')
+                    ->badge()
+                    ->color(fn(RepairRequest $record) => $record->actionStatus->color->value)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d-m-Y H:s:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d-m-Y H:s:i')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -129,6 +187,7 @@ class RepairRequestResource extends Resource
         return [
             'index' => Pages\ListRepairRequests::route('/'),
             'create' => Pages\CreateRepairRequest::route('/create'),
+            'view' => Pages\ViewRepairRequest::route('/{record}'),
             'edit' => Pages\EditRepairRequest::route('/{record}/edit'),
         ];
     }

@@ -30,7 +30,7 @@ class RepairLogResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->rule == \App\Enums\Rules::Admin;
+        return true;
     }
 
     public static function getGloballySearchableAttributes(): array
@@ -65,31 +65,35 @@ class RepairLogResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')
+                Tables\Columns\TextColumn::make('rowid')
                     ->label('ID')
+                    ->rowIndex(),
+                Tables\Columns\TextColumn::make('repair.job_no')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('repair_request_id')
+                Tables\Columns\TextColumn::make('oldStatus.name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('updated_by_id')
+                Tables\Columns\TextColumn::make('newStatus.name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('old_status_id')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('new_status_id')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('note')
+                    ->html(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Update By')
+                    ->searchable()
+                    ->badge(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d-m-Y H:s:i')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d-m-Y H:s:i')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -110,7 +114,7 @@ class RepairLogResource extends Resource
         return [
             'index' => Pages\ListRepairLogs::route('/'),
             // 'create' => Pages\CreateRepairLog::route('/create'),
-            'edit' => Pages\EditRepairLog::route('/{record}/edit'),
+            // 'edit' => Pages\EditRepairLog::route('/{record}/edit'),
         ];
     }
 }

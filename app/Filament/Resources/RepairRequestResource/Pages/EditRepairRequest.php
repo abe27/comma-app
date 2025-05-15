@@ -5,6 +5,7 @@ namespace App\Filament\Resources\RepairRequestResource\Pages;
 use App\Filament\Resources\RepairRequestResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Auth;
 
 class EditRepairRequest extends EditRecord
 {
@@ -15,9 +16,11 @@ class EditRepairRequest extends EditRecord
         return [
             $this->getSaveFormAction()
                 ->icon('heroicon-o-check-circle')
-                ->formId('form'),
+                ->formId('form')
+                ->visible(fn() => Auth::user()->rule == \App\Enums\Rules::Admin),
             Actions\DeleteAction::make()
-                ->icon('heroicon-o-x-circle'),
+                ->icon('heroicon-o-x-circle')
+                ->visible(fn() => Auth::user()->rule == \App\Enums\Rules::Admin),
         ];
     }
 

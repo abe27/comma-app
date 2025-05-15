@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('repair_logs', function (Blueprint $table) {
             $table->ulid('id')->primary();
+            $table->integer('seq');
             $table->foreignUlid('repair_request_id')->constrained();
             $table->foreignUlid('updated_by_id')->constrained('users');
-            $table->foreignUlid('old_status_id')->constrained('action_statuses');
-            $table->foreignUlid('new_status_id')->constrained('action_statuses');
+            $table->foreignUlid('old_status_id')->nullable()->constrained('action_statuses');
+            $table->foreignUlid('new_status_id')->nullable()->constrained('action_statuses');
             $table->longText('note')->nullable();
             $table->timestamps();
         });

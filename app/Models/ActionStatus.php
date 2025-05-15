@@ -13,6 +13,7 @@ class ActionStatus extends Model
 
     protected $fillable = [
         'name',
+        'value',
         'description',
         'color',
         'is_active',

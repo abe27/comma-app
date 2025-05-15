@@ -15,12 +15,31 @@ class RepairRequest extends Model
         'user_id',
         'device_type_id',
         'device_id',
+        'assigned_to',
+        'vendor_id',
+        'job_date',
         'job_no',
         'name',
         'description',
+        'remark',
+        'attachments',
         'location',
         'action_status_id',
     ];
+
+    protected $casts = [
+        'attachments' => 'array'
+    ];
+
+    public function getAssignedAttribute()
+    {
+        if ($this->assigned_to) {
+            return $this->assignedTo->full_name;
+        } else if ($this->vendor_id) {
+            return $this->vendor->name;
+        }
+        return '-';
+    }
 
     public function user()
     {
@@ -35,6 +54,16 @@ class RepairRequest extends Model
     public function device()
     {
         return $this->belongsTo(Device::class);
+    }
+
+    public function assignedTo()
+    {
+        return $this->belongsTo(User::class, 'assigned_to', 'id');
+    }
+
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class);
     }
 
     public function actionStatus()

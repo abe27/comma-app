@@ -12,6 +12,7 @@ class RepairLog extends Model
     use HasFactory, Notifiable, HasUlids;
 
     protected $fillable = [
+        'seq',
         'repair_request_id',
         'updated_by_id',
         'old_status_id',
@@ -23,7 +24,7 @@ class RepairLog extends Model
 
     public function repair()
     {
-        return $this->belongsTo(RepairRequest::class);
+        return $this->belongsTo(RepairRequest::class, 'repair_request_id', 'id');
     }
 
     public function user()

@@ -16,9 +16,14 @@ return new class extends Migration
             $table->foreignUlid('user_id')->constrained();
             $table->foreignUlid('device_type_id')->constrained();
             $table->foreignUlid('device_id')->constrained();
+            $table->foreignUlid('assigned_to')->nullable()->constrained('users');
+            $table->foreignUlid('vendor_id')->nullable()->constrained();
+            $table->date('job_date')->nullable();
             $table->string('job_no')->unique();
             $table->string('name');
             $table->longText('description')->nullable();
+            $table->longText('remark')->nullable();
+            $table->string('attachments')->nullable();
             $table->string('location')->nullable();
             $table->foreignUlid('action_status_id')->nullable()->constrained();
             $table->timestamps();
