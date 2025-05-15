@@ -81,6 +81,7 @@ class RepairRequestResource extends Resource
                             ->maxLength(255)
                             ->columnStart(1),
                         Forms\Components\RichEditor::make('description')
+                            ->hiddenOn('edit')
                             ->columnSpanFull(),
                         Forms\Components\RichEditor::make('remark')
                             ->hiddenOn(['create', 'edit'])
