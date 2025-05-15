@@ -102,7 +102,7 @@ class ViewRepairRequest extends ViewRecord
             Actions\Action::make('employee_receive')
                 ->label("รับงาน")
                 ->icon('heroicon-o-check-circle')
-                ->visible(fn(RepairRequest $record) => Auth::user()->rule == \App\Enums\Rules::Employee && $this->record->actionStatus->value < 4)
+                ->visible(fn(RepairRequest $record) => Auth::user()->rule == \App\Enums\Rules::Employee && $this->record->actionStatus->value == 1)
                 ->action(function (array $data) {
                     $oldStatus = $this->record->action_status_id;
                     $this->record->action_status_id = ActionStatus::where('value', 4)->first()->id;
@@ -133,10 +133,10 @@ class ViewRepairRequest extends ViewRecord
                 ->label("ซ่อมเสร็จแล้ว")
                 ->color('success')
                 ->icon('heroicon-o-check-circle')
-                ->visible(fn() => Auth::user()->rule == \App\Enums\Rules::Employee && $this->record->actionStatus->value <= 4)
+                ->visible(fn() => Auth::user()->rule == \App\Enums\Rules::Employee && $this->record->actionStatus->value == 4)
                 ->action(function () {
                     $oldStatus = $this->record->action_status_id;
-                    $this->record->action_status_id = ActionStatus::where('value', 6)->first()->id;
+                    $this->record->action_status_id = ActionStatus::where('value', 11)->first()->id;
                     $this->record->save();
 
                     // บันทึกประวัติ
@@ -157,6 +157,45 @@ class ViewRepairRequest extends ViewRecord
                         ->danger()
                         ->title("แจ้งเตือน")
                         ->body($this->record->job_no . " " . $this->record->actionStatus->name)
+                        ->sendToDatabase($user);
+                    return redirect()->to(route('filament.web.resources.repair-request.index'));
+                }),
+            Actions\Action::make('send_to_vendor')
+                ->label("ส่งงานให้ Vendor")
+                ->color('warning')
+                ->icon('heroicon-o-paper-airplane')
+                ->visible(fn() => Auth::user()->rule == \App\Enums\Rules::Employee && $this->record->actionStatus->value == 4)
+                ->requiresConfirmation()
+                ->form([
+                    Forms\Components\Select::make('vendor_id')
+                        ->label('Vendor')
+                        ->searchable()
+                        ->options(fn() => \App\Models\Vendor::all()->pluck('name', 'id')->toArray()),
+                ])
+                ->action(function (array $data) {
+                    $oldStatus = $this->record->action_status_id;
+                    $this->record->vendor_id = $data["vendor_id"];
+                    $this->record->action_status_id = ActionStatus::where('value', 7)->first()->id;
+                    $this->record->save();
+
+                    // บันทึกประวัติ
+                    $seq = RepairLog::where('repair_request_id', $this->record->id)->count();
+                    RepairLog::create([
+                        'seq' => $seq,
+                        'repair_request_id' => $this->record->id,
+                        'updated_by_id' => Auth::user()->id,
+                        'old_status_id' => $oldStatus,
+                        'new_status_id' => $this->record->action_status_id,
+                        'note' => "ส่งมอบงานให้ Vendor",
+                    ]);
+
+
+                    // แจ้งเตือนไปยัง User
+                    $user = User::where("id", $this->record->user_id)->first();
+                    Notification::make()
+                        ->danger()
+                        ->title("แจ้งเตือน")
+                        ->body($this->record->job_no . " " . $this->record->actionStatus->name . " ให้ Vendor แล้ว")
                         ->sendToDatabase($user);
                     return redirect()->to(route('filament.web.resources.repair-request.index'));
                 }),
@@ -189,7 +228,7 @@ class ViewRepairRequest extends ViewRecord
     public function getHeading(): string
     {
         $record = $this->getRecord();
-        return $record->name;
+        return $record->job_no . "(" . $record->actionStatus->name . ")";
     }
 
     protected function getRedirectUrl(): string

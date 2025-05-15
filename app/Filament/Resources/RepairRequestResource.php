@@ -13,6 +13,8 @@ use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
@@ -51,7 +53,7 @@ class RepairRequestResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Information')
+                Forms\Components\Section::make('ข้อมูลเบื้องต้น')
                     ->compact()
                     ->collapsible()
                     ->columns(4)
@@ -174,6 +176,27 @@ class RepairRequestResource extends Resource
                 ]),
             ]);
     }
+
+    // public static function infolist(Infolist $infolist): Infolist
+    // {
+    //     return $infolist
+    //         ->schema([
+    //             Infolists\Components\Section::make('ข้อมูลเบื้องต้น')
+    //                 ->compact()
+    //                 ->columns(4)
+    //                 ->columnSpanFull()
+    //                 ->schema([
+    //                     Infolists\Components\TextEntry::make('deviceType.name')
+    //                         ->badge(),
+    //                     Infolists\Components\TextEntry::make('device.brand')
+    //                         ->badge(),
+    //                     Infolists\Components\TextEntry::make('device.model')
+    //                         ->badge(),
+    //                     Infolists\Components\TextEntry::make('device.asset_tag')
+    //                         ->badge(),
+    //                 ]),
+    //         ]);
+    // }
 
     public static function getRelations(): array
     {

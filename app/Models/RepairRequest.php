@@ -33,10 +33,10 @@ class RepairRequest extends Model
 
     public function getAssignedAttribute()
     {
-        if ($this->assigned_to) {
-            return $this->assignedTo->full_name;
-        } else if ($this->vendor_id) {
+        if ($this->vendor_id) {
             return $this->vendor->name;
+        } else if ($this->assigned_to) {
+            return $this->assignedTo->full_name;
         }
         return '-';
     }

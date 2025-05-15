@@ -14,7 +14,7 @@ class ListDeviceTypes extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->label("Create")
+                ->label("เพิ่มข้อมูลใหม่")
                 ->icon('heroicon-o-plus-circle'),
         ];
     }
