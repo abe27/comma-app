@@ -18,6 +18,7 @@ use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\HtmlString;
 
 class RepairRequestResource extends Resource
 {
@@ -81,10 +82,9 @@ class RepairRequestResource extends Resource
                             ->maxLength(255)
                             ->columnStart(1),
                         Forms\Components\RichEditor::make('description')
-                            ->hiddenOn('edit')
                             ->columnSpanFull(),
                         Forms\Components\RichEditor::make('remark')
-                            ->hiddenOn(['create', 'edit'])
+                            ->hiddenOn(['create'])
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('location')
                             ->maxLength(255)
@@ -111,9 +111,9 @@ class RepairRequestResource extends Resource
             ->query(function () {
                 $repairs = static::getModel()::where('job_date', '>=', "01-" . now()->format('m-Y'));
                 if (in_array(Auth::user()->rule, [\App\Enums\Rules::Employee])) {
-                    return $repairs->where('assigned_to', Auth::user()->id)->orderBy('updated_at');
+                    return $repairs->where('assigned_to', Auth::user()->id)->orderBy('updated_at', 'desc');
                 }
-                return $repairs->orderBy('updated_at');
+                return $repairs->orderBy('updated_at', 'desc');
             })
             ->columns([
                 Tables\Columns\TextColumn::make('rowid')
@@ -169,7 +169,10 @@ class RepairRequestResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->visible(fn() => Auth::user()->rule == \App\Enums\Rules::User),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn() => Auth::user()->rule != \App\Enums\Rules::User),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
