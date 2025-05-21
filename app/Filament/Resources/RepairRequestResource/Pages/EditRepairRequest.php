@@ -132,7 +132,7 @@ class EditRepairRequest extends EditRecord
                 ->label("ซ่อมเสร็จแล้ว")
                 ->color('success')
                 ->icon('heroicon-o-check-circle')
-                ->visible(fn() => Auth::user()->rule == \App\Enums\Rules::Employee && $this->record->actionStatus->value == 4)
+                ->visible(fn() => Auth::user()->rule == \App\Enums\Rules::Employee && in_array($this->record->actionStatus->value, [4, 7]))
                 ->form([
                     Forms\Components\RichEditor::make('remark')
                         ->required()

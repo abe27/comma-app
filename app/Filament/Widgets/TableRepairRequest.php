@@ -6,6 +6,7 @@ use App\Models\RepairRequest;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
+use Illuminate\Support\Facades\Auth;
 
 class TableRepairRequest extends BaseWidget
 {
@@ -73,6 +74,12 @@ class TableRepairRequest extends BaseWidget
                     ->dateTime('d-m-Y H:s:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
+            ])
+            ->actions([
+                // Tables\Actions\ViewAction::make()
+                //     ->visible(fn() => Auth::user()->rule == \App\Enums\Rules::User),
+                // Tables\Actions\EditAction::make()
+                //     ->visible(fn() => Auth::user()->rule != \App\Enums\Rules::User),
             ]);
     }
 }
