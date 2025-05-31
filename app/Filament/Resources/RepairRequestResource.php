@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RepairRequestResource\Pages;
-use App\Filament\Resources\RepairRequestResource\RelationManagers;
 use App\Models\Device;
 use App\Models\DeviceType;
 use App\Models\RepairRequest;
@@ -15,10 +14,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Actions\ExportAction;
+use Filament\Tables\Actions\ExportBulkAction;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\HtmlString;
 
 class RepairRequestResource extends Resource
 {
@@ -176,6 +174,9 @@ class RepairRequestResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    ExportBulkAction::make()
+                        ->label('Export Excel')
+                        ->exporter(\App\Filament\Exports\RepairRequestExporter::class),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
