@@ -72,7 +72,7 @@ class CreateRepairRequest extends CreateRecord
             $subjectName = Auth::user()->name . "เปิด " . $this->record->job_no;
             $docNo = $this->record->job_no;
             $description = $subjectName . "\nรบกวนดำเนินการต่อด้วย";
-            Mail::to('krumii.it@gmail.com')->send(new SendMail($subjectName, "ผู้ดูแลระบบ", $docNo, $description));
+            Mail::to(env('ADMIN_EMAIL', 'krumii.it@gmail.com'))->send(new SendMail($subjectName, "ผู้ดูแลระบบ", $docNo, $description));
         } catch (Exception $ex) {
         }
 
