@@ -15,14 +15,18 @@ class SendMail extends Mailable
 
     public string $subjectName;
     public string $name;
+    public string $docNo;
+    public string $description;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(string $subjectName, string $name)
+    public function __construct(string $subjectName, string $name, string $docNo, string $description)
     {
         $this->subjectName = $subjectName;
         $this->name = $name;
+        $this->docNo = $docNo;
+        $this->description = $description;
     }
 
     /**
@@ -42,7 +46,11 @@ class SendMail extends Mailable
     {
         return new Content(
             view: 'mail.send-email',
-            with: ['name' => $this->name],
+            with: [
+                'name' => $this->name,
+                'docno' => $this->docNo,
+                'detail' => $this->description
+            ],
         );
     }
 

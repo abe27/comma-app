@@ -8,6 +8,7 @@ use App\Models\ActionStatus;
 use App\Models\RepairLog;
 use App\Models\RepairRequest;
 use App\Models\User;
+use Exception;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
@@ -66,8 +67,14 @@ class CreateRepairRequest extends CreateRecord
             'note' => 'เปิดเอสารหมายเลข ' . $this->record->job_no,
         ]);
 
-        // Send Mail
-        Mail::to('krumii.it@gmail.com')->send(new SendMail(Auth::user()->name . "เปิด " . $this->record->job_no, "ผู้ดูแลระบบ"));
+        try {
+            // Send Mail
+            $subjectName = Auth::user()->name . "เปิด " . $this->record->job_no;
+            $docNo = $this->record->job_no;
+            $description = $subjectName . "\nรบกวนดำเนินการต่อด้วย";
+            Mail::to('krumii.it@gmail.com')->send(new SendMail($subjectName, "ผู้ดูแลระบบ", $docNo, $description));
+        } catch (Exception $ex) {
+        }
 
         // แจ้งเตือนไปยัง Admin
         $users = User::where('rule', \App\Enums\Rules::Admin)->get();

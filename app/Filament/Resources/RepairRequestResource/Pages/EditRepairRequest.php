@@ -3,14 +3,17 @@
 namespace App\Filament\Resources\RepairRequestResource\Pages;
 
 use App\Filament\Resources\RepairRequestResource;
+use App\Mail\SendMail;
 use App\Models\ActionStatus;
 use App\Models\RepairLog;
 use App\Models\User;
+use Exception;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Mail;
 
 class EditRepairRequest extends EditRecord
 {
@@ -55,6 +58,16 @@ class EditRepairRequest extends EditRecord
                         ->title("แจ้งเตือน")
                         ->body("Admin ได้ทำการยกเลิกรายการ " . $this->record->job_no . " แล้ว\nเนื่องจาก " . $data['remark'])
                         ->sendToDatabase($user);
+
+
+                    try {
+                        // Send Mail
+                        $subjectName = "ผู้ดูแลระบบทำการยกเลิกเอกสาร " . $this->record->job_no;
+                        $docNo = $this->record->job_no;
+                        $description = $subjectName;
+                        Mail::to($user->email)->send(new SendMail($subjectName, $user->full_name, $docNo, $description));
+                    } catch (Exception $ex) {
+                    }
                     return redirect()->to(route('filament.web.resources.repair-request.index'));
                 }),
             Actions\Action::make('admin_assigned_to')
@@ -95,6 +108,16 @@ class EditRepairRequest extends EditRecord
                         ->title("แจ้งเตือน")
                         ->body("Admin ได้มอบงานให้ " . $this->record->assignedTo->name . " แล้ว")
                         ->sendToDatabase($user);
+
+
+                    try {
+                        // Send Mail
+                        $subjectName = "ผู้ดูแลระบบดำเนินการกับเอกสาร " . $this->record->job_no;
+                        $docNo = $this->record->job_no;
+                        $description = "ผู้ดูแลระบบดำเนินการมอบเอกสาร " . $this->record->job_no . "\nให้แก่พนักงานเรียบร้อยแล้ว";
+                        Mail::to($user->email)->send(new SendMail($subjectName, $user->full_name, $docNo, $description));
+                    } catch (Exception $ex) {
+                    }
                     return redirect()->to(route('filament.web.resources.repair-request.index'));
                 }),
             // สำหรับพนักงาน IT
@@ -126,6 +149,15 @@ class EditRepairRequest extends EditRecord
                         ->title("แจ้งเตือน")
                         ->body("IT " . $this->record->actionStatus->name . " " . $this->record->job_no)
                         ->sendToDatabase($user);
+
+                    try {
+                        // Send Mail
+                        $subjectName = "พนักงานไอทีกำลังดำเนินการกับเอกสาร " . $this->record->job_no;
+                        $docNo = $this->record->job_no;
+                        $description = "IT " . $this->record->actionStatus->name . "\nกำลังดำเนินการตรวจสอบเอกสารเลขที่ " . $this->record->job_no;
+                        Mail::to($user->email)->send(new SendMail($subjectName, $user->full_name, $docNo, $description));
+                    } catch (Exception $ex) {
+                    }
                     return redirect()->to(route('filament.web.resources.repair-request.index'));
                 }),
             Actions\Action::make('employee_success')
@@ -162,6 +194,16 @@ class EditRepairRequest extends EditRecord
                         ->title("แจ้งเตือน")
                         ->body($this->record->job_no . " " . $this->record->actionStatus->name)
                         ->sendToDatabase($user);
+
+
+                    try {
+                        // Send Mail
+                        $subjectName = "พนักงานไอทีตรวจสอบเอกสาร " . $this->record->job_no;
+                        $docNo = $this->record->job_no;
+                        $description = "IT " . $this->record->actionStatus->name . "\nกำลังดำเนินการตรวจสอบเอกสารเลขที่ " . $this->record->job_no . "เรียบร้อยแล้ว";
+                        Mail::to($user->email)->send(new SendMail($subjectName, $user->full_name, $docNo, $description));
+                    } catch (Exception $ex) {
+                    }
                     return redirect()->to(route('filament.web.resources.repair-request.index'));
                 }),
             Actions\Action::make('send_to_vendor')
@@ -201,6 +243,16 @@ class EditRepairRequest extends EditRecord
                         ->title("แจ้งเตือน")
                         ->body($this->record->job_no . " " . $this->record->actionStatus->name . " ให้ Vendor แล้ว")
                         ->sendToDatabase($user);
+
+
+                    try {
+                        // Send Mail
+                        $subjectName = "พนักงานไอทีกำลังตรวจสอบเอกสาร " . $this->record->job_no;
+                        $docNo = $this->record->job_no;
+                        $description = "IT " . $this->record->actionStatus->name . "\nกำลังดำเนินการตรวจสอบเอกสารเลขที่ " . $this->record->job_no . "เรียบร้อยแล้ว\nและได้ส่งต่อให้กับทาง Vendor ตรวจสอบ";
+                        Mail::to($user->email)->send(new SendMail($subjectName, $user->full_name, $docNo, $description));
+                    } catch (Exception $ex) {
+                    }
                     return redirect()->to(route('filament.web.resources.repair-request.index'));
                 }),
             // $this->getSaveFormAction()
