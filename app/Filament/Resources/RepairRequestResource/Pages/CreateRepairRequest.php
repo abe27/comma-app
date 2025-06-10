@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\RepairRequestResource\Pages;
 
 use App\Filament\Resources\RepairRequestResource;
+use App\Mail\SendMail;
 use App\Models\ActionStatus;
 use App\Models\RepairLog;
 use App\Models\RepairRequest;
@@ -11,6 +12,7 @@ use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class CreateRepairRequest extends CreateRecord
@@ -63,6 +65,9 @@ class CreateRepairRequest extends CreateRecord
             'new_status_id' => $this->record->action_status_id,
             'note' => 'เปิดเอสารหมายเลข ' . $this->record->job_no,
         ]);
+
+        // Send Mail
+        Mail::to('krumii.it@gmail.com')->send(new SendMail(Auth::user()->name . "เปิด " . $this->record->job_no, "ผู้ดูแลระบบ"));
 
         // แจ้งเตือนไปยัง Admin
         $users = User::where('rule', \App\Enums\Rules::Admin)->get();
