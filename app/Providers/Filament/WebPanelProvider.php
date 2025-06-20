@@ -47,8 +47,8 @@ class WebPanelProvider extends PanelProvider
             ->widgets([
                 // Widgets\AccountWidget::class,
                 // Widgets\FilamentInfoWidget::class,
-                \App\Filament\Widgets\StatsOverview::class,
-                \App\Filament\Widgets\TableRepairRequest::class,
+                // \App\Filament\Widgets\StatsOverview::class,
+                // \App\Filament\Widgets\RequestBarChart::class,
             ])
             ->middleware([
                 EncryptCookies::class,
